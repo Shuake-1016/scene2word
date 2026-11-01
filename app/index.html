@@ -101,10 +101,9 @@
 <div class="stage" id="stage">
   <div class="done">今晚的任务</div>
   <div class="sub">
-    ① 切片 → 单词 → 记住 / 没记住（10 个）<br>
-    ② 例句：一次一个，出现即朗读（10 个）<br>
-    ③ 拼写：汉译英，背景放切片原声（10 个）<br>
-    ④ 没记住 + 拼错的，二次巩固
+    ① 看片段 → 单词 + 例句 → 记住 / 没记住（10 个，一串到底）<br>
+    ② 拼写：汉译英，背景放切片原声<br>
+    ③ 没记住 + 拼错的，二次巩固
   </div>
   <div class="btns">
     <button class="primary" onclick="startDaily()">每天 10 个</button>
@@ -412,9 +411,9 @@ function takeChunk(){
   beginLearn();
 }
 
-function beginLearn(){ phase = 1; qi = 0; phaseName='环节一 · 切片'; phaseTotal=batch.length; renderLearn(); }
+function beginLearn(){ phase = 1; qi = 0; phaseName='环节一 · 看片段'; phaseTotal=batch.length; renderLearn(); }
 function renderLearn(){
-  if(qi>=batch.length){ startExamples(); return; }
+  if(qi>=batch.length){ startSpell(); return; }
   const k = batch[qi]; const w = WORDS[+k]; curW=w; curI=k;
   const clip = clipOf(w[0]);
   if(clip){ playClip(clip, ()=>faceCard(w, k)); }
@@ -464,7 +463,10 @@ function faceCard(w, k){
     '<div class="badge">环节一 · 认词　' + (qi+1) + '/' + batch.length + '</div>' +
     '<div class="word">' + w[0] + '</div>' +
     '<div class="pos">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
-    (stillOf(w[0]) ? '<img class="still" src="' + stillOf(w[0]) + '" onerror="this.style.display=\'none\'">' : '') +
+    '<div class="examples" style="margin:10px 0 2px"><div class="exrow">' +
+      '<button class="speak" onclick="sayEx(0)">' + SPK + '</button>' +
+      '<div class="example">' + ((w[2] && w[2][0]) || '') + '</div>' +
+    '</div></div>' +
     '<div class="btns">' +
       '<button class="primary" onclick="learnAnswer(true)">记住了（回车）</button>' +
       '<button class="ghost" onclick="learnAnswer(false)">没记住</button>' +
@@ -505,7 +507,7 @@ function renderSpell(){
   const k = spellQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
   playClipAudio(w[0]);
   stage().innerHTML =
-    '<div class="badge">环节三 · 拼写　' + (qi+1) + '/' + spellQ.length + '</div>' +
+    '<div class="badge">环节二 · 拼写　' + (qi+1) + '/' + spellQ.length + '</div>' +
     '<div class="meaning">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
     '<div style="width:100%;display:flex;justify-content:center;margin-top:22px">' +
       '<input id="din" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="拼出英文，回车">' +
@@ -552,7 +554,7 @@ function checkSpell(){
 function startConsolidate(){
   consQ = Array.from(sessionWrong);
   if(!consQ.length){ startPhrases(); return; }
-  phase = 4; qi = 0; phaseName='环节四 · 巩固'; phaseTotal=consQ.length; renderConsolidate();
+  phase = 4; qi = 0; phaseName='环节三 · 巩固'; phaseTotal=consQ.length; renderConsolidate();
 }
 function renderConsolidate(){
   if(qi>=consQ.length){ takeChunk(); return; }
@@ -564,7 +566,7 @@ function renderConsolidate(){
 function consCard(w){
   window._then = null;
   stage().innerHTML =
-    '<div class="badge">环节四 · 巩固　' + (qi+1) + '/' + consQ.length + '</div>' +
+    '<div class="badge">环节三 · 巩固　' + (qi+1) + '/' + consQ.length + '</div>' +
     '<div class="word">' + w[0] + '</div>' +
     (stillOf(w[0]) ? '<img class="still" src="' + stillOf(w[0]) + '" onerror="this.style.display=\'none\'">' : '') +
     '<div class="btns"><button class="speak" onclick="sayWord()">' + SPK + '</button>' +
