@@ -19,3 +19,10 @@ words.js
 __pycache__/
 *.pyc
 .venv/
+
+# 例外：仓库自带的 CC BY 演示片段
+!docs/demo-clips/
+!docs/demo-clips/*.mp4
+!docs/demo-clips/img/
+!docs/demo-clips/img/*.jpg
+!docs/step*.png
