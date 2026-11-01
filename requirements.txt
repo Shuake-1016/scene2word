@@ -1,0 +1,4 @@
+faster-whisper>=1.0.0
+edge-tts>=6.1.0
+imageio-ffmpeg>=0.4.9
+wordfreq>=3.1.0

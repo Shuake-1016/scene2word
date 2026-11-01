@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>睡前 10 个 · 雅思 + 四级</title>
+<style>
+  :root{
+    --bg:#faf7f0; --card:#fffefb; --ink:#2b2620; --dim:#8f8679;
+    --line:#ece5d8; --soft:#f4efe4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,"PingFang SC","Hiragino Sans GB",sans-serif;
+       display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:26px 20px 60px;}
+  header{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;}
+  h1{font-size:23px;margin:0;letter-spacing:.6px;font-weight:600;}
+  .date{color:var(--dim);font-size:14.5px;}
+  .grid{width:100%;max-width:900px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:center;}
+  .box .k{font-size:13px;color:var(--dim);margin-bottom:4px;}
+  .box .v{font-size:25px;font-weight:600;font-variant-numeric:tabular-nums;}
+  .box .v span{font-size:12.5px;color:var(--dim);font-weight:400;}
+  .stage{width:100%;max-width:900px;background:var(--card);border:1px solid var(--line);border-radius:22px;
+         padding:32px 28px;min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+         text-align:center;position:relative;box-shadow:0 10px 34px rgba(120,100,70,.05);}
+  .word{font-size:84px;font-weight:600;letter-spacing:.4px;margin:6px 0 12px;line-height:1.1;}
+  .pos{color:#7a7062;font-size:20px;margin-bottom:6px;}
+  .meaning{font-size:40px;line-height:1.45;margin:8px 0;font-weight:600;}
+  .examples{width:100%;max-width:760px;margin-top:10px;}
+  .exrow{display:flex;align-items:flex-start;gap:10px;margin:8px 0;text-align:left;}
+  .exrow .example{flex:1;margin:0;}
+  .example{color:#4f463c;font-size:20px;line-height:1.7;}
+  .phr{color:#8a7f6f;font-size:17px;margin-top:8px;}
+  .hint{color:var(--dim);font-size:16px;margin-top:14px;}
+  .btns{display:flex;gap:14px;margin-top:24px;flex-wrap:wrap;justify-content:center;align-items:center;}
+  button{font-family:inherit;font-size:19px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);
+         padding:14px 30px;cursor:pointer;transition:.15s;letter-spacing:.5px;}
+  button:hover{background:var(--soft);}
+  button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+  button.primary:hover{background:#3d372f;}
+  button.ghost{background:transparent;}
+  button.speak{padding:9px 13px;border-radius:50%;line-height:0;}
+  button.opt{min-width:220px;font-size:26px;padding:18px 24px;}
+  video{width:100%;max-width:780px;border-radius:14px;background:#000;}
+  input{font-family:inherit;font-size:38px;text-align:center;padding:16px 20px;border-radius:14px;border:2px solid var(--line);
+        background:#fff;width:100%;max-width:520px;outline:none;letter-spacing:2px;}
+  input:focus{border-color:var(--ink);}
+  .right{color:#2f6b45;} .wrong{color:#a33a3a;}
+  .badge{position:absolute;top:15px;left:22px;font-size:13.5px;color:var(--dim);letter-spacing:.5px;}
+  .skip{position:absolute;top:12px;right:20px;font-size:13px;padding:6px 12px;border-radius:16px;color:var(--dim);}
+  .still{max-width:480px;width:100%;border-radius:14px;margin:14px auto 0;display:block;
+         box-shadow:0 10px 28px rgba(80,60,40,.16);}
+  .praise-pic{max-width:460px;width:100%;border-radius:14px;margin:6px auto 10px;display:block;
+              box-shadow:0 12px 30px rgba(80,60,40,.18);animation:pop .45s ease-out;}
+  @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+  .praise-word{font-size:44px;font-weight:600;letter-spacing:.5px;color:#2b2620;margin-top:4px;}
+  .stage{transition:opacity .16s ease, transform .16s ease;}
+  .stage.swipe-out{opacity:0;transform:translateX(-70px) scale(.985);}
+  .stage.swipe-in{animation:slidein .22s cubic-bezier(.2,.7,.3,1);}
+  @keyframes slidein{from{opacity:0;transform:translateX(70px) scale(.985)}to{opacity:1;transform:none}}
+  .stage.listmode{justify-content:flex-start;align-items:center;}
+  .lhead{font-size:15px;color:var(--dim);margin:18px 0 6px;letter-spacing:.5px;}
+  .wordlist{width:100%;max-width:660px;max-height:380px;overflow-y:auto;text-align:left;
+            border-top:1px solid var(--line);}
+  .lrow{display:flex;justify-content:space-between;gap:18px;padding:8px 4px;
+        border-bottom:1px solid #f4efe4;font-size:17px;line-height:1.5;}
+  .lrow b{font-weight:600;white-space:nowrap;}
+  .lrow span{color:#7a7062;text-align:right;}
+  .blanks{font-size:30px;letter-spacing:6px;color:#b9ae9c;margin:6px 0 10px;}
+  .done{font-size:32px;font-weight:600;margin-bottom:10px;}
+  .sub{color:#5c5349;font-size:19px;line-height:1.95;}
+</style>
+</head>
+<body>
+<header>
+  <h1>睡前 10 个 · 雅思 + 四级</h1>
+  <div class="date" id="date"></div>
+</header>
+
+<div class="grid">
+  <div class="box"><div class="k">新词</div><div class="v"><b id="nNew">0</b><span>/10</span></div></div>
+  <div class="box"><div class="k">复习</div><div class="v"><b id="nRev">0</b><span>/50</span></div></div>
+  <div class="box"><div class="k">拼写</div><div class="v"><b id="nDic">0</b><span>/10</span></div></div>
+  <div class="box"><div class="k">生词本</div><div class="v"><b id="nWb2">0</b></div></div>
+</div>
+
+<div id="audiohint" style="display:none;max-width:900px;width:100%;margin-bottom:12px;padding:10px 16px;
+     background:#fff4e5;border:1px solid #f0d9b5;border-radius:10px;color:#8a5a20;font-size:15px;">
+  浏览器拦截了自动朗读 —— 点一下页面任意位置就行（只需一次）
+</div>
+<div class="stage" id="stage">
+  <div class="done">今晚的任务</div>
+  <div class="sub">
+    ① 切片 → 单词 → 记住 / 没记住（10 个）<br>
+    ② 例句：一次一个，出现即朗读（10 个）<br>
+    ③ 拼写：汉译英，背景放切片原声（10 个）<br>
+    ④ 没记住 + 拼错的，二次巩固
+  </div>
+  <div class="btns">
+    <button class="primary" onclick="startDaily()">每天 10 个</button>
+    <button class="ghost" onclick="startAll()">全部从头过一遍</button>
+  </div>
+  <div class="hint" style="margin-top:18px;cursor:pointer;text-decoration:underline" onclick="resetAll()">清空进度，完全从头开始</div>
+</div>
+
+<script src="words.js"></script>
+<script src="clips/index.js" onerror="window.CLIPS={}"></script>
+<script src="audio/index.js" onerror="window.PRAISE=[]"></script>
+<script src="audio/tts/index.js" onerror="window.TTSW=[];window.TTSE={}"></script>
+<script src="audio/tts/phrase_index.js" onerror="window.TTSP=[]"></script>
+<script>
+const WORDS = window.DATA.words, PHRASES = window.DATA.phrases;
+window.CLIPS = window.CLIPS || {};
+window.PRAISE = window.PRAISE || [];
+window.TTSW = window.TTSW || []; window.TTSE = window.TTSE || {}; window.TTSP = window.TTSP || [];
+function localPhrase(i, kind){
+  return (window.TTSP.indexOf(i) >= 0) ? 'audio/tts/p/' + i + '_' + kind + '.mp3' : null;
+}
+function localWord(word){
+  const w = String(word || '').toLowerCase();
+  return window.TTSW.indexOf(w) >= 0 ? 'audio/tts/w/' + w + '.mp3' : null;
+}
+function localEx(word, i){
+  const w = String(word || '').toLowerCase();
+  return window.TTSE[w + ':' + i] ? 'audio/tts/e/' + w + '_' + i + '.mp3' : null;
+}
+const praisePool = window.PRAISE.map(p => { const a = new Audio('audio/' + p.f); a.preload = 'auto'; return a; });
+function playPraise(){
+  if(!praisePool.length) return null;
+  const idx = Math.floor(Math.random() * praisePool.length);
+  const a = praisePool[idx];
+  try{ a.pause(); a.currentTime = 0; a.play().catch(()=>{}); }catch(e){}
+  return window.PRAISE[idx];
+}
+const KEY = 'ielts_vocab_v5';
+const today = new Date().toISOString().slice(0,10);
+
+let S = JSON.parse(localStorage.getItem(KEY) || 'null') || {words:{}, stats:{}, streak:0, lastDay:'', phraseIdx:0, wrongBook:{}};
+if(!S.stats[today]) S.stats[today] = {n:0,r:0,d:0,p:0};
+if(!S.wrongBook) S.wrongBook = {};
+const st = () => S.stats[today];
+let allQueue = [], sessNew = 0, sessSpell = 0;
+const CHUNK = 10;
+const stage = () => document.getElementById('stage');
+
+function swipe(renderFn){
+  const el = stage();
+  el.classList.remove('swipe-in');
+  el.classList.add('swipe-out');
+  setTimeout(()=>{
+    renderFn();
+    el.classList.remove('swipe-out');
+    void el.offsetWidth;
+    el.classList.add('swipe-in');
+    setTimeout(()=>el.classList.remove('swipe-in'), 260);
+  }, 165);
+}
+const save = () => localStorage.setItem(KEY, JSON.stringify(S));
+
+(function streak(){
+  if(!S.lastDay){ S.lastDay=today; S.streak=1; save(); return; }
+  if(S.lastDay!==today){
+    const d=Math.round((new Date(today)-new Date(S.lastDay))/86400000);
+    S.streak = d===1 ? S.streak+1 : 0; S.lastDay=today; save();
+  }
+})();
+
+function refresh(){
+  document.getElementById('date').textContent = today + '　连续 ' + S.streak + ' 天';
+  document.getElementById('nNew').textContent = sessNew;
+  document.getElementById('nRev').textContent = st().r;
+  document.getElementById('nDic').textContent = sessSpell;
+  document.getElementById('nWb2').textContent = Object.keys(S.wrongBook).length;
+}
+refresh();
+
+/* 英音 */
+let VOICE = null, LOCAL_VOICE = null, NET_FAILS = 0;
+const NOVELTY = /Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley|Bells|Boing|Bubbles|Cellos|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Bad News|Good News|Albert|Fred|Junior|Ralph|Bahh|Zosia|Tessa|Moira|Karen|Rishi/i;
+
+function scoreVoice(v){
+  let s = 0;
+  if(/Google UK English Male/i.test(v.name)) s += 100;
+  else if(/Google UK English/i.test(v.name)) s += 80;
+  else if(/Google US English/i.test(v.name)) s += 40;
+  if(/en[-_]GB/i.test(v.lang)) s += 20;
+  if(/Enhanced|Premium/i.test(v.name)) s += 30;
+  if(/Daniel|Arthur|Oliver/i.test(v.name)) s += 10;
+  if(NOVELTY.test(v.name)) s -= 200;
+  return s;
+}
+
+function pickVoice(){
+  const vs = speechSynthesis.getVoices();
+  const list = vs.slice().sort((a,b)=>scoreVoice(b)-scoreVoice(a));
+  VOICE = list[0] || null;
+  LOCAL_VOICE = vs.filter(v => v.localService && /en[-_]GB/i.test(v.lang) && !NOVELTY.test(v.name))[0]
+             || vs.filter(v => v.localService && /^en/i.test(v.lang) && !NOVELTY.test(v.name))[0] || null;
+  console.log('voice:', VOICE && VOICE.name, '| fallback:', LOCAL_VOICE && LOCAL_VOICE.name);
+}
+speechSynthesis.onvoiceschanged = pickVoice; pickVoice();
+
+function say(text, rate){
+  if(!text) return;
+  LAST_SAY = text;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='en-GB'; u.rate=rate||0.86; u.pitch=1; u.volume=1;
+    if(VOICE) u.voice = VOICE;
+    u.onstart = () => { SPEAK_FAILS = 0; hideAudioHint(); };
+    u.onerror = () => { if(LOCAL_VOICE && u.voice !== LOCAL_VOICE){ u.voice = LOCAL_VOICE; try{ speechSynthesis.speak(u); }catch(e){} } };
+    u.onerror = () => { SPEAK_FAILS++; if(SPEAK_FAILS >= 2) showAudioHint(); };
+    speechSynthesis.speak(u);
+    setTimeout(()=>{
+      if(!speechSynthesis.speaking && !speechSynthesis.pending){
+        SPEAK_FAILS++;
+        if(SPEAK_FAILS >= 2) showAudioHint();
+      }
+    }, 700);
+  }catch(e){ showAudioHint(); }
+}
+
+function activeVoice(){ return NET_FAILS >= 2 ? (LOCAL_VOICE || VOICE) : VOICE; }
+
+function speakTTS(text, done){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-GB'; u.rate = 0.92; u.pitch = 1;
+    const v = activeVoice();
+    if(v) u.voice = v;
+    let ended = false;
+    const fin = () => { if(ended) return; ended = true; done && done(); };
+    u.onend = fin;
+    u.onerror = () => {
+      NET_FAILS++;
+      if(LOCAL_VOICE && u.voice !== LOCAL_VOICE){
+        u.voice = LOCAL_VOICE;
+        try{ speechSynthesis.speak(u); }catch(e){ fin(); }
+      } else fin();
+    };
+    speechSynthesis.speak(u);
+    setTimeout(fin, 1200 + text.length * 95);
+  }catch(e){ done && done(); }
+}
+
+function saySeq(list){
+  const items = (list || []).filter(Boolean).map(x => (typeof x === 'string') ? {text: x} : x);
+  try{ speechSynthesis.cancel(); }catch(e){}
+  let i = 0;
+  const step = () => {
+    if(i >= items.length) return;
+    const it = items[i++];
+    let done = false;
+    const fin = () => { if(done) return; done = true; setTimeout(step, 200); };
+    if(it.file){
+      try{
+        const a = new Audio(it.file);
+        a.onended = fin;
+        a.onerror = () => speakTTS(it.text, fin);
+        a.play().catch(() => speakTTS(it.text, fin));
+        setTimeout(fin, 1500 + (it.text || '').length * 95);
+        return;
+      }catch(e){}
+    }
+    if(it.text) speakTTS(it.text, fin); else fin();
+  };
+  step();
+}
+
+function sayWordSeq(word, rate){
+  saySeq([{ text: word, file: localWord(word) }]);
+}
+
+function showAudioHint(){
+  const el = document.getElementById('audiohint');
+  if(el) el.style.display = 'block';
+}
+function hideAudioHint(){
+  const el = document.getElementById('audiohint');
+  if(el) el.style.display = 'none';
+}
+/* 浏览器拦截自动播放时：任意点一下页面就恢复，并补读一次 */
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  const t = e.target;
+  if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;   // 输入框自己处理
+  const stageEl = document.getElementById('stage');
+  const primary = stageEl && stageEl.querySelector('button.primary');
+  if(primary){ e.preventDefault(); primary.click(); return; }
+  const next = Array.from(document.querySelectorAll('button')).find(b => b.textContent === '下一个');
+  if(next){ e.preventDefault(); next.click(); }
+}, true);
+
+document.addEventListener('click', function(){
+  try{
+    if(speechSynthesis.paused) speechSynthesis.resume();
+    if(SPEAK_FAILS >= 2 && LAST_SAY){ SPEAK_FAILS = 0; say(LAST_SAY); }
+  }catch(e){}
+}, true);
+
+const SPK = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+
+/* 排程 */
+function dueKeys(limit){
+  const out=[];
+  for(const k in S.words){ const w=S.words[k]; if(w.due<=today && w.box<5) out.push(k); }
+  out.sort((a,b)=>S.words[a].due.localeCompare(S.words[b].due));
+  return out.slice(0,limit);
+}
+function freshKeys(limit){
+  const out=[]; for(let i=0;i<WORDS.length && out.length<limit;i++) if(!S.words[i]) out.push(String(i));
+  return out;
+}
+function bump(k, ok){
+  const w = S.words[k] || (S.words[k]={box:0,due:today,wrong:0,right:0});
+  if(ok){ w.box=Math.min(5,w.box+1); w.right++; } else { w.box=Math.max(0,w.box-1); w.wrong++; }
+  const gap=[0,1,2,4,7,15][w.box]||15;
+  const d=new Date(); d.setDate(d.getDate()+gap);
+  w.due=d.toISOString().slice(0,10); save();
+}
+function clipOf(word){
+  const key = word.toLowerCase();
+  return (window.CLIPS && window.CLIPS[key]) ? 'clips/' + key + '.mp4' : null;
+}
+function stillOf(word){
+  const key = word.toLowerCase();
+  return (window.CLIPS && window.CLIPS[key]) ? 'clips/img/' + key + '.jpg' : null;
+}
+
+/* ================= 会话状态机 ================= */
+let pool=[], batch=[], phase=1, qi=0, missed=new Set(), reviewQ=[], curW=null, curI=0;
+let exampleQ=[], spellQ=[], consQ=[], sessionWrong=new Set();
+let phaseName='切片', phaseTotal=10;
+
+function startDaily(){ S.mode = 'daily'; save(); startSession(); }
+function startAll(){ S.mode = 'all'; save(); startSession(); }
+function resetAll(){
+  if(!confirm('清空所有学习记录，从第一个词重新开始？')) return;
+  localStorage.removeItem(KEY);
+  location.reload();
+}
+
+function readyKeys(n){
+  let out = freshKeys(n);
+  if(out.length < n){
+    const due = dueKeys(n - out.length);
+    out = out.concat(due.filter(k => out.indexOf(k) < 0));
+  }
+  if(out.length < n){                       // 还是不够，就随机补
+    const rest = WORDS.map((_, i) => String(i)).filter(k => out.indexOf(k) < 0);
+    while(out.length < n && rest.length) out.push(rest.splice(Math.floor(Math.random()*rest.length), 1)[0]);
+  }
+  return out;
+}
+
+function startSession(){
+  reviewQ = dueKeys(50 - st().r);
+  const cap = (S.mode === 'all') ? 100000 : CHUNK;
+  allQueue = (S.mode === 'all') ? readyKeys(WORDS.length) : readyKeys(cap);
+  if(S.mode === 'all'){ st().n = 0; st().d = 0; st().r = 0; }
+  save();
+  if(reviewQ.length){ phase = 0; qi = 0; renderReview(); return; }
+  takeChunk();
+}
+
+/* 复习旧词 */
+function renderReview(){
+  if(qi>=reviewQ.length){ beginLearn(); return; }
+  const w = WORDS[+reviewQ[qi]]; curW=w; curI=reviewQ[qi];
+  stage().innerHTML =
+    '<div class="badge">复习　' + (qi+1) + '/' + reviewQ.length + '</div>' +
+    '<div class="word">' + w[0] + '</div>' +
+    '<div class="btns"><button class="speak" onclick="sayWord()">' + SPK + '</button>' +
+    '<button class="primary" onclick="revAnswer(true)">记得</button>' +
+    '<button class="ghost" onclick="revAnswer(false)">忘了</button></div>';
+  sayWordSeq(w[0]);
+}
+function revAnswer(ok){
+  try{ speechSynthesis.cancel(); }catch(e){}
+  bump(reviewQ[qi], ok); st().r++;
+  if(!ok){ S.wrongBook[reviewQ[qi]] = 1; sessionWrong.add(String(reviewQ[qi])); }
+  save(); refresh(); qi++; renderReview();
+}
+
+/* 环节一：切片 → 单词 → 记住/没记住 */
+function takeChunk(){
+  batch = allQueue.splice(0, CHUNK);
+  sessNew = 0; sessSpell = 0;
+  sessionWrong = new Set();
+  S.todayBatch = (S.todayBatch || []).concat(batch).slice(-CHUNK);
+  save();
+  if(!batch.length){ finish(); return; }
+  beginLearn();
+}
+
+function beginLearn(){ phase = 1; qi = 0; phaseName='环节一 · 切片'; phaseTotal=batch.length; renderLearn(); }
+function renderLearn(){
+  if(qi>=batch.length){ startExamples(); return; }
+  const k = batch[qi]; const w = WORDS[+k]; curW=w; curI=k;
+  const clip = clipOf(w[0]);
+  if(clip){ playClip(clip, ()=>faceCard(w, k)); }
+  else faceCard(w, k);
+}
+function playClip(src, then){
+  stage().innerHTML =
+    '<div class="badge">' + phaseName + '　' + (qi+1) + '/' + phaseTotal + '</div>' +
+    '<button class="skip" onclick="skipClip()">跳过</button>' +
+    '<video id="cv" src="' + src + '" playsinline></video>' +
+    '<div class="hint">先看两句对白铺垫，再重复 2 遍目标句</div>';
+  window._then = then;
+  const v = document.getElementById('cv');
+  v.onloadeddata = () => v.play().catch(()=>{});
+  v.onended = () => setTimeout(()=>{ if(window._then) window._then(); }, 280);
+  v.onerror = () => { if(window._then) window._then(); };
+}
+function skipClip(){ const t=window._then; window._then=null; if(t) t(); }
+function sayWord(){ if(curW) sayWordSeq(curW[0]); }
+
+function faceCard(w, k){
+  window._then = null;
+  stage().innerHTML =
+    '<div class="badge">环节一 · 认词　' + (qi+1) + '/' + batch.length + '</div>' +
+    '<div class="word">' + w[0] + '</div>' +
+    '<div class="pos">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
+    (stillOf(w[0]) ? '<img class="still" src="' + stillOf(w[0]) + '" onerror="this.style.display=\'none\'">' : '') +
+    '<div class="btns">' +
+      '<button class="primary" onclick="learnAnswer(true)">记住了（回车）</button>' +
+      '<button class="ghost" onclick="learnAnswer(false)">没记住</button>' +
+    '</div>';
+  sayWordSeq(w[0]);
+}
+
+function learnAnswer(ok){
+  try{ speechSynthesis.cancel(); }catch(e){}
+  const k = batch[qi];
+  bump(k, ok);
+  if(ok){ st().n++; } else { S.wrongBook[k] = 1; missed.add(k); sessionWrong.add(String(k)); }
+  sessNew++;
+  save(); refresh(); qi++; swipe(renderLearn);
+}
+
+/* 环节二：一次一个例句，出现即朗读 */
+function startExamples(){ phase = 2; qi = 0; exampleQ = batch.slice(); renderExample(); }
+function renderExample(){
+  if(qi>=exampleQ.length){ startSpell(); return; }
+  const k = exampleQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
+  const ex = (w[2] && w[2][0]) ? w[2][0] : '';
+  stage().innerHTML =
+    '<div class="badge">环节二 · 例句　' + (qi+1) + '/' + exampleQ.length + '</div>' +
+    '<div class="word" style="font-size:52px">' + w[0] + '</div>' +
+    '<div class="pos">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
+    '<div class="examples"><div class="exrow"><button class="speak" onclick="sayEx(0)">' + SPK + '</button>' +
+    '<div class="example">' + ex + '</div></div></div>' +
+    '<div class="btns"><button class="primary" onclick="swipe(()=>{qi++;renderExample()})">下一个</button></div>';
+  saySeq([{ text: w[0], file: localWord(w[0]) }, { text: ex, file: localEx(w[0], 0) }]);
+}
+function sayEx(i){ const w = curW; if(w && w[2] && w[2][i]) say(w[2][i], 0.85); }
+
+/* 环节三：汉译拼写，背景放切片原声 */
+function startSpell(){ phase = 3; qi = 0; spellQ = batch.slice(); renderSpell(); }
+function renderSpell(){
+  if(qi>=spellQ.length){ startConsolidate(); return; }
+  const k = spellQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
+  playClipAudio(w[0]);
+  stage().innerHTML =
+    '<div class="badge">环节三 · 拼写　' + (qi+1) + '/' + spellQ.length + '</div>' +
+    '<div class="meaning">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
+    '<div style="width:100%;display:flex;justify-content:center;margin-top:22px">' +
+      '<input id="din" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="拼出英文，回车">' +
+    '</div>' +
+    '<div class="btns"><button class="primary" onclick="checkSpell()">确认</button></div>';
+  const inp=document.getElementById('din'); inp.focus();
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') checkSpell(); });
+}
+let clipAudio = null;
+function playClipAudio(word){
+  const c = clipOf(word);
+  try{
+    if(clipAudio){ clipAudio.pause(); clipAudio = null; }
+    if(!c) return;
+    clipAudio = new Audio(c);
+    clipAudio.volume = 0.9;
+    clipAudio.play().catch(()=>{});
+  }catch(e){}
+}
+function checkSpell(){
+  const inp=document.getElementById('din'); if(!inp) return;
+  const w=curW;
+  const ok = inp.value.trim().toLowerCase() === w[0].toLowerCase();
+  inp.disabled = true;
+  if(clipAudio){ try{ clipAudio.pause(); }catch(e){} }
+  st().d++; sessSpell++;
+  if(ok){ bump(curI,1); }
+  else {
+    bump(curI,0); S.wrongBook[String(curI)] = 1; sessionWrong.add(String(curI));
+    spellQ.push(curI);                 // 再出现一次
+  }
+  save(); refresh();
+  stage().querySelector('.btns').innerHTML =
+    '<div class="' + (ok?'right':'wrong') + '" style="font-size:26px;margin-bottom:6px">' +
+      (ok ? '✓ 正确' : '✗ 正确拼写：' + w[0]) + '</div>' +
+    '<div class="example" style="font-size:18px">' + w[0] + '　' + w[1] + '</div>' +
+    '<button class="primary" onclick="swipe(()=>{qi++;renderSpell()})">下一个</button>';
+  if(ok) say(w[0], 0.9);
+}
+
+/* 环节四：没记住 + 拼错的，二次巩固 */
+function startConsolidate(){
+  consQ = Array.from(sessionWrong);
+  if(!consQ.length){ startPhrases(); return; }
+  phase = 4; qi = 0; phaseName='环节四 · 巩固'; phaseTotal=consQ.length; renderConsolidate();
+}
+function renderConsolidate(){
+  if(qi>=consQ.length){ takeChunk(); return; }
+  const k = consQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
+  const clip = clipOf(w[0]);
+  if(clip){ playClip(clip, ()=>consCard(w)); return; }
+  consCard(w);
+}
+function consCard(w){
+  window._then = null;
+  stage().innerHTML =
+    '<div class="badge">环节四 · 巩固　' + (qi+1) + '/' + consQ.length + '</div>' +
+    '<div class="word">' + w[0] + '</div>' +
+    (stillOf(w[0]) ? '<img class="still" src="' + stillOf(w[0]) + '" onerror="this.style.display=\'none\'">' : '') +
+    '<div class="btns"><button class="speak" onclick="sayWord()">' + SPK + '</button>' +
+    '<button class="primary" onclick="consDone()">记住了</button></div>';
+  saySeq([{ text: w[0], file: localWord(w[0]) }].concat(
+    (w[2]||[]).slice(0,1).map((t,i) => ({ text: t, file: localEx(w[0], i) }))));
+}
+function consDone(){
+  try{ speechSynthesis.cancel(); }catch(e){}
+  delete S.wrongBook[consQ[qi]];
+  bump(consQ[qi], 1); save(); refresh(); qi++; swipe(renderConsolidate);
+}
+
+/* 短语 */
+let pq=[], pp=0;
+function startPhrases(){
+  const need = 5 - st().p;
+  if(need<=0){ finish(); return; }
+  pq=[]; for(let i=0;i<need;i++) pq.push(PHRASES[(S.phraseIdx+i)%PHRASES.length]);
+  pp=0; renderPhrase();
+}
+function renderPhrase(){
+  if(pp>=pq.length){ finish(); return; }
+  const p=pq[pp]; window._p=p;
+  stage().innerHTML =
+    '<div class="badge">短语　' + (pp+1) + '/' + pq.length + '</div>' +
+    '<div class="word" style="font-size:44px">' + p[0] + '</div>' +
+    '<div class="meaning" style="font-size:26px">' + p[1] + '</div>' +
+    '<div class="exrow"><button class="speak" onclick="sayP(2)">' + SPK + '</button><div class="example">' + p[2] + '</div></div>' +
+    '<div class="btns"><button class="primary" onclick="nextPhrase()">记下了（回车）</button></div>';
+  sayPhrase(pp);
+}
+
+function sayPhrase(i){
+  const p = PHRASES[i];
+  if(!p) return;
+  saySeq([
+    { text: p[0], file: localPhrase(i, 0) },
+    { text: p[2], file: localPhrase(i, 1) }
+  ]);
+}
+
+function sayP(kind){
+  const i = pp;
+  const p = PHRASES[i];
+  if(!p) return;
+  if(kind === 2 || kind === 1) saySeq([{ text: p[2], file: localPhrase(i, 1) }]);
+  else saySeq([{ text: p[0], file: localPhrase(i, 0) }]);
+}
+function nextPhrase(){ st().p++; S.phraseIdx++; save(); refresh(); pp++; renderPhrase(); }
+
+function wordRow(w){
+  return '<div class="lrow"><b>' + w[0] + '</b><span>' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</span></div>';
+}
+
+function finish(){
+  save(); refresh();
+  const rows = batch.map(k => wordRow(WORDS[+k])).join('');
+  stage().classList.add('listmode');
+  stage().innerHTML =
+    '<div class="done">今天完成了</div>' +
+    '<div class="sub">新词 ' + st().n + ' ｜ 复习 ' + st().r + ' ｜ 短语 ' + st().p + '<br>' +
+    '生词本累计 <b>' + Object.keys(S.wrongBook).length + '</b> 个词　连续打卡 <b>' + S.streak + '</b> 天</div>' +
+    '<div class="lhead">今天的 ' + batch.length + ' 个词</div>' +
+    '<div class="wordlist" style="max-height:none">' + rows + '</div>' +
+    '<div class="btns"><button class="primary" onclick="restartToday()">重学今天这 10 个</button>' +
+    '<button class="ghost" onclick="showAll()">全部词表</button>' +
+    '<button class="ghost" onclick="startPhrases()">今天的 5 个短语</button>' +
+    '<button class="ghost" onclick="location.reload()">回到首页</button></div>';
+}
+
+function restartToday(){
+  const b = (S.todayBatch && S.todayBatch.length) ? S.todayBatch : batch;
+  b.forEach(k => { delete S.words[k]; delete S.wrongBook[k]; });
+  st().n = 0; st().d = 0; st().r = 0;
+  save();
+  location.reload();
+}
+
+function showAll(){
+  stage().classList.add('listmode');
+  stage().innerHTML =
+    '<div class="lhead">全部 ' + WORDS.length + ' 个词（按常用度排序）</div>' +
+    '<div class="wordlist" style="max-height:640px">' + WORDS.map(wordRow).join('') + '</div>' +
+    '<div class="btns"><button class="ghost" onclick="location.reload()">回到首页</button></div>';
+}
+</script>
+</body>
+</html>
