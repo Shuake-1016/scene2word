@@ -64,9 +64,10 @@ open app/index.html
 `words.demo.js` 指向仓库自带的 **5 段真实剧集片段**，来自开源电影 **《Tears of Steel》**：
 真实对白、真实画面、真实切句效果——所以克隆下来就能跑通「片段 → 单词 → 例句 → 拼写」的完整流程。
 
-> 素材：**Tears of Steel** © Blender Foundation | [mango.blender.org](https://mango.blender.org)
-> 许可：**CC BY 3.0**（可自由复制、分发、商用，需署名）
-> 仓库内只保留 5 段各 3–5 秒的教学片段，用于演示流程。
+> 素材：**Tears of Steel** (2012) © Blender Foundation · [mango.blender.org](https://mango.blender.org)
+> 许可：**[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)**（可复制、分发、商用，需署名）
+> 改动说明：本项目对其**节选、缩放并添加中英文字幕**
+> 仓库内只保留 5 段各 3–10 秒的教学片段，用于演示流程。
 
 **换成你自己的剧**：删掉 `docs/demo-clips/`，把你的视频放进 `videos/` 跑一次 pipeline 即可。
 

@@ -8,8 +8,12 @@
 
 本项目**不提供、不包含、不分发**任何电影、电视剧、纪录片或其他影视作品的画面、音频、字幕。
 
-仓库里唯一存在的视频，是 `docs/demo-clips/` 下 5 段来自开源电影 **Tears of Steel**
-（© Blender Foundation | [mango.blender.org](https://mango.blender.org)，**CC BY 3.0**）的片段，
+仓库里唯一存在的视频，是 `docs/demo-clips/` 下 5 段来自开源电影的片段：
+
+> **Tears of Steel** (2012) · © Blender Foundation · [mango.blender.org](https://mango.blender.org)
+> 许可：**CC BY 3.0** · [许可全文](https://creativecommons.org/licenses/by/3.0/)
+> 本项目对其进行了**节选、缩放并添加中英文字幕**（已按许可要求标注改动）
+
 仅用于演示程序如何工作。
 
 **这 5 段片段只是「事例」，不构成任何引导、指向或推荐。**

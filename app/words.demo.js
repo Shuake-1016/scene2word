@@ -1,5 +1,4 @@
-// 演示数据：片段来自开源电影《Tears of Steel》
-// © Blender Foundation | mango.blender.org | CC BY 3.0
+// 演示片段：Tears of Steel (2012) · © Blender Foundation | mango.blender.org · CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/) · 本仓库对其进行了节选、缩放并添加中英文字幕
 window.DATA = {"words": [["fault", "n. 过错；故障", ["It's not my fault, you know.", "Whose fault is that?"], "at fault　有责任"], ["honest", "adj. 诚实的；坦率的", ["Be honest.", "To be honest, I hesitated."], "be honest with　对……坦诚"], ["passion", "n. 热情；热爱", ["I see your passion.", "She spoke with passion."], "with passion　满怀热情"], ["remind", "v. 提醒；使想起", ["Remind her what love is.", "Remind me to call him."], "remind sb of　使某人想起"], ["worry", "v. 担心", ["Nothing to worry about, Tom.", "Don't worry about it."], "worry about　担心"]], "phrases": [["nothing to worry about", "没什么好担心的", "Nothing to worry about, Tom."]]};
 window.CLIPS_BASE = '../docs/demo-clips/';
 window.CLIPS = {fault:1, honest:1, passion:1, remind:1, worry:1};
