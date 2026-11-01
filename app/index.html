@@ -7,7 +7,8 @@
 <style>
   :root{
     --bg:#faf7f0; --card:#fffefb; --ink:#2b2620; --dim:#8f8679;
-    --line:#ece5d8; --soft:#f4efe4;
+    --line:#ece5d8; --soft:#f4efe4; --gold:#b08a4a; --red:#c0392b;
+    --shadow:0 16px 44px rgba(120,100,70,.09);
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--bg);color:var(--ink);
@@ -21,7 +22,7 @@
   .box .k{font-size:13px;color:var(--dim);margin-bottom:4px;}
   .box .v{font-size:25px;font-weight:600;font-variant-numeric:tabular-nums;}
   .box .v span{font-size:12.5px;color:var(--dim);font-weight:400;}
-  .stage{width:100%;max-width:900px;background:var(--card);border:1px solid var(--line);border-radius:22px;
+  .stage{width:100%;max-width:900px;background:linear-gradient(180deg,#fffefb 0%,#fffdf8 100%);border:1px solid var(--line);border-radius:26px;
          padding:32px 28px;min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;
          text-align:center;position:relative;box-shadow:0 10px 34px rgba(120,100,70,.05);}
   .word{font-size:84px;font-weight:600;letter-spacing:.4px;margin:6px 0 12px;line-height:1.1;}
@@ -33,6 +34,14 @@
   .example{color:#4f463c;font-size:20px;line-height:1.7;}
   .phr{color:#8a7f6f;font-size:17px;margin-top:8px;}
   .hint{color:var(--dim);font-size:16px;margin-top:14px;}
+  .subs{width:100%;max-width:780px;margin:14px auto 0;text-align:center;}
+  .sub-en{font-size:21px;line-height:1.65;color:#33302b;letter-spacing:.2px;}
+  .sub-en .hl{color:var(--red);font-weight:700;border-bottom:2px solid rgba(192,57,43,.25);padding-bottom:1px;}
+  .sub-zh{font-size:16px;color:#7d7466;margin-top:6px;letter-spacing:.3px;}
+  .sub-zh b{color:#5c5247;font-weight:600;}
+  .spell-ok{color:#2f6b45;font-size:26px;font-weight:600}
+  .spell-no{color:var(--red);font-size:26px;font-weight:600}
+  video{box-shadow:0 12px 32px rgba(60,45,30,.14);}
   .btns{display:flex;gap:14px;margin-top:24px;flex-wrap:wrap;justify-content:center;align-items:center;}
   button{font-family:inherit;font-size:19px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);
          padding:14px 30px;cursor:pointer;transition:.15s;letter-spacing:.5px;}
@@ -126,6 +135,12 @@ function localEx(word, i){
   return window.TTSE[w + ':' + i] ? 'audio/tts/e/' + w + '_' + i + '.mp3' : null;
 }
 const praisePool = window.PRAISE.map(p => { const a = new Audio('audio/' + p.f); a.preload = 'auto'; return a; });
+const SFX = { correct: new Audio('audio/sfx/correct.mp3'), wrong: new Audio('audio/sfx/wrong.mp3') };
+function playSfx(kind){
+  const a = SFX[kind]; if(!a) return;
+  try{ a.pause(); a.currentTime = 0; a.volume = 0.85; a.play().catch(()=>{}); }catch(e){}
+}
+
 function playPraise(){
   if(!praisePool.length) return null;
   const idx = Math.floor(Math.random() * praisePool.length);
@@ -405,17 +420,41 @@ function renderLearn(){
   else faceCard(w, k);
 }
 function playClip(src, then){
+  const w = curW || [''];
+  const sent = pickSentence(w);
+  const enHtml = highlightWord(sent, w[0]);
+  const zh = (w[1] || '').replace(/^[a-z&.\s]+\.\s*/, '');
   stage().innerHTML =
     '<div class="badge">' + phaseName + '　' + (qi+1) + '/' + phaseTotal + '</div>' +
     '<button class="skip" onclick="skipClip()">跳过</button>' +
     '<video id="cv" src="' + src + '" playsinline></video>' +
-    '<div class="hint">先看两句对白铺垫，再重复 2 遍目标句</div>';
+    '<div class="subs">' +
+      '<div class="sub-en">' + (enHtml || '&nbsp;') + '</div>' +
+      '<div class="sub-zh"><b>' + w[0] + '</b>　' + zh + '</div>' +
+    '</div>';
   window._then = then;
   const v = document.getElementById('cv');
   v.onloadeddata = () => v.play().catch(()=>{});
   v.onended = () => setTimeout(()=>{ if(window._then) window._then(); }, 280);
   v.onerror = () => { if(window._then) window._then(); };
 }
+
+function pickSentence(w){
+  const list = w[2] || [];
+  for(const s of list){
+    if(s && s.toLowerCase().indexOf((w[0]||'').toLowerCase()) >= 0) return s;
+  }
+  return list[0] || '';
+}
+
+function highlightWord(sent, word){
+  if(!sent) return '';
+  const safe = sent.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if(!word) return safe;
+  const re = new RegExp('(' + word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'ig');
+  return safe.replace(re, '<span class="hl">$1</span>');
+}
+
 function skipClip(){ const t=window._then; window._then=null; if(t) t(); }
 function sayWord(){ if(curW) sayWordSeq(curW[0]); }
 
@@ -493,16 +532,18 @@ function checkSpell(){
   inp.disabled = true;
   if(clipAudio){ try{ clipAudio.pause(); }catch(e){} }
   st().d++; sessSpell++;
-  if(ok){ bump(curI,1); }
+  if(ok){ bump(curI,1); playSfx('correct'); }
   else {
     bump(curI,0); S.wrongBook[String(curI)] = 1; sessionWrong.add(String(curI));
     spellQ.push(curI);                 // 再出现一次
+    playSfx('wrong');
   }
   save(); refresh();
   stage().querySelector('.btns').innerHTML =
-    '<div class="' + (ok?'right':'wrong') + '" style="font-size:26px;margin-bottom:6px">' +
-      (ok ? '✓ 正确' : '✗ 正确拼写：' + w[0]) + '</div>' +
-    '<div class="example" style="font-size:18px">' + w[0] + '　' + w[1] + '</div>' +
+    (ok
+      ? '<div class="spell-ok">✓ 正确</div>'
+      : '<div class="spell-no">✗ 正确拼写：' + w[0] + '</div>' +
+        '<div class="sub-zh" style="margin-bottom:6px">' + w[1].replace(/^[a-z&.\\s]+\\.\\s*/,'') + '</div>') +
     '<button class="primary" onclick="swipe(()=>{qi++;renderSpell()})">下一个</button>';
   if(ok) say(w[0], 0.9);
 }
