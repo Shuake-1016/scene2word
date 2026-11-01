@@ -105,10 +105,10 @@
 </div>
 
 <script src="words.js"></script>
-<script src="clips/index.js" onerror="window.CLIPS={}"></script>
-<script src="audio/index.js" onerror="window.PRAISE=[]"></script>
-<script src="audio/tts/index.js" onerror="window.TTSW=[];window.TTSE={}"></script>
-<script src="audio/tts/phrase_index.js" onerror="window.TTSP=[]"></script>
+<script src="clips/index.js" onerror="window.CLIPS=window.CLIPS||{}"></script>
+<script src="audio/index.js" onerror="window.PRAISE=window.PRAISE||[]"></script>
+<script src="audio/tts/index.js" onerror="window.TTSW=window.TTSW||[];window.TTSE=window.TTSE||{}"></script>
+<script src="audio/tts/phrase_index.js" onerror="window.TTSP=window.TTSP||[]"></script>
 <script>
 const WORDS = window.DATA.words, PHRASES = window.DATA.phrases;
 window.CLIPS = window.CLIPS || {};
