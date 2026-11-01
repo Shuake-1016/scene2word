@@ -37,6 +37,8 @@ audio/tts/*.mp3  本地音频
 
 生成的 `app/index.html` 直接打开即可使用。
 
+**想先看界面**：把 `app/words.sample.js` 复制成 `app/words.js`，双击 `app/index.html`，就能看到完整交互（示例词没有视频片段，会直接出卡片）。
+
 ## 学习流程（四环节）
 
 | 环节 | 内容 |
