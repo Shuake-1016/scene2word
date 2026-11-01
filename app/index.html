@@ -115,6 +115,7 @@
 
 <script src="words.js"></script>
 <script src="clips/index.js" onerror="window.CLIPS=window.CLIPS||{}"></script>
+<script src="clips/sentences.js" onerror="window.CLIP_SENT=window.CLIP_SENT||{}"></script>
 <script src="audio/index.js" onerror="window.PRAISE=window.PRAISE||[]"></script>
 <script src="audio/tts/index.js" onerror="window.TTSW=window.TTSW||[];window.TTSE=window.TTSE||{}"></script>
 <script src="audio/tts/phrase_index.js" onerror="window.TTSP=window.TTSP||[]"></script>
@@ -421,16 +422,15 @@ function renderLearn(){
 }
 function playClip(src, then){
   const w = curW || [''];
-  const sent = pickSentence(w);
+  const sent = (window.CLIP_SENT && window.CLIP_SENT[w[0]]) || pickSentence(w);
   const enHtml = highlightWord(sent, w[0]);
   const zh = (w[1] || '').replace(/^[a-z&.\s]+\.\s*/, '');
   stage().innerHTML =
     '<div class="badge">' + phaseName + '　' + (qi+1) + '/' + phaseTotal + '</div>' +
     '<button class="skip" onclick="skipClip()">跳过</button>' +
     '<video id="cv" src="' + src + '" playsinline></video>' +
-    '<div class="subs">' +
-      '<div class="sub-en">' + (enHtml || '&nbsp;') + '</div>' +
-      '<div class="sub-zh"><b>' + w[0] + '</b>　' + zh + '</div>' +
+    '<div class="sub-zh" style="margin-top:10px">' +
+      '<b>' + w[0] + '</b>　' + (w[1] || '').replace(/^[a-z&.\s]+\.\s*/, '') +
     '</div>';
   window._then = then;
   const v = document.getElementById('cv');
