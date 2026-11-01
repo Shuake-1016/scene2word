@@ -320,13 +320,14 @@ function bump(k, ok){
   const d=new Date(); d.setDate(d.getDate()+gap);
   w.due=d.toISOString().slice(0,10); save();
 }
+function clipBase(){ return window.CLIPS_BASE || 'clips/'; }
 function clipOf(word){
   const key = word.toLowerCase();
-  return (window.CLIPS && window.CLIPS[key]) ? 'clips/' + key + '.mp4' : null;
+  return (window.CLIPS && window.CLIPS[key]) ? clipBase() + key + '.mp4' : null;
 }
 function stillOf(word){
   const key = word.toLowerCase();
-  return (window.CLIPS && window.CLIPS[key]) ? 'clips/img/' + key + '.jpg' : null;
+  return (window.CLIPS && window.CLIPS[key]) ? clipBase() + 'img/' + key + '.jpg' : null;
 }
 
 /* ================= 会话状态机 ================= */
