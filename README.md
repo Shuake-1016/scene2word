@@ -119,6 +119,22 @@ audio/        生成的音频（.gitignore）
 这是工具的常见定位（与 ffmpeg、PotPlayer 同类）：**工具中立，责任在使用者。**
 如你认为本项目有不妥之处，欢迎开 issue 讨论。
 
+
+## 想换素材？这些是合法可用的
+
+| 来源 | 许可 | 内容 | 能不能商用 |
+|---|---|---|---|
+| **Tears of Steel / Sintel / Big Buck Bunny** | CC BY 3.0 | Blender 开源电影，有英语对白 | ✅ 可商用，需署名 |
+| **NASA 影像库** | 公有领域 | 航天、地球、太空 | ✅ 随便用 |
+| **Wikimedia Commons** | 公有领域 / CC | 老电影、纪录片、演讲 | 看单个文件标注 |
+| **Library of Congress** | 公有领域 | 早期美国电影 | ✅ |
+| **你自己的 DVD / 已购买的数字版** | 个人使用 | 任何剧 | ⚠️ 自己看可以，别分发 |
+
+> 判断标准很简单：**看它有没有明确写 CC0 / CC BY / Public Domain**。
+> 写了“仅限学习交流”的，就是没授权。
+
+把这几个来源的视频放进 `videos/`，跑一次 pipeline，就能生成你自己的词库。
+
 ## 技术要点
 
 - **词级时间戳**：faster-whisper 的 `word_timestamps=True`，切句按停顿（>0.35s）分段
