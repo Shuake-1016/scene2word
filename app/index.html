@@ -345,10 +345,46 @@ function stillOf(word){
   return (window.CLIPS && window.CLIPS[key]) ? clipBase() + 'img/' + key + '.jpg' : null;
 }
 
+
+/* ---- 片段播放 ---- */
+let clipAudio = null;
+
+function playClip(src, then){
+  const w = curW || [''];
+  const zh = (w[1] || '').replace(/^[a-z&.\s]+\.\s*/, '');
+  stage().innerHTML =
+    '<div class="badge">' + phaseName + '　' + (qi+1) + '/' + phaseTotal + '</div>' +
+    '<button class="skip" onclick="skipClip()">跳过</button>' +
+    '<video id="cv" src="' + src + '" playsinline></video>' +
+    '<div class="sub-zh" style="margin-top:10px"><b>' + w[0] + '</b>　' + zh + '</div>';
+  window._then = then;
+  const v = document.getElementById('cv');
+  v.onloadeddata = () => v.play().catch(()=>{});
+  v.onended = () => setTimeout(()=>{ if(window._then) window._then(); }, 280);
+  v.onerror = () => { if(window._then) window._then(); };
+}
+
+function skipClip(){ const t = window._then; window._then = null; if(t) t(); }
+
+function playClipAudio(word){
+  const c = clipOf(word);
+  try{
+    if(clipAudio){ clipAudio.pause(); clipAudio = null; }
+    if(!c) return;
+    clipAudio = new Audio(c);
+    clipAudio.volume = 0.85;
+    clipAudio.play().catch(()=>{});
+  }catch(e){}
+}
+
+function sayWord(){ if(curW) sayWordSeq(curW[0]); }
+function sayEx(i){ const w = curW; if(w && w[2] && w[2][i]) saySeq([{ text: w[2][i], file: localEx(w[0], i) }]); }
+
 /* ================= 会话状态机 ================= */
-let pool=[], batch=[], phase=1, qi=0, missed=new Set(), reviewQ=[], curW=null, curI=0;
-let exampleQ=[], spellQ=[], consQ=[], sessionWrong=new Set();
-let phaseName='切片', phaseTotal=10;
+/* 每个词：① 看切片 → ② 看单词+例句 → ③ 拼写 → 下一个词 */
+let pool=[], batch=[], qi=0, step=0, missed=new Set(), reviewQ=[], curW=null, curI=0;
+let consQ=[], sessionWrong=new Set();
+let phaseName='', phaseTotal=0;
 
 function startDaily(){ S.mode = 'daily'; save(); startSession(); }
 function startAll(){ S.mode = 'all'; save(); startSession(); }
@@ -364,7 +400,7 @@ function readyKeys(n){
     const due = dueKeys(n - out.length);
     out = out.concat(due.filter(k => out.indexOf(k) < 0));
   }
-  if(out.length < n){                       // 还是不够，就随机补
+  if(out.length < n){
     const rest = WORDS.map((_, i) => String(i)).filter(k => out.indexOf(k) < 0);
     while(out.length < n && rest.length) out.push(rest.splice(Math.floor(Math.random()*rest.length), 1)[0]);
   }
@@ -377,13 +413,13 @@ function startSession(){
   allQueue = (S.mode === 'all') ? readyKeys(WORDS.length) : readyKeys(cap);
   if(S.mode === 'all'){ st().n = 0; st().d = 0; st().r = 0; }
   save();
-  if(reviewQ.length){ phase = 0; qi = 0; renderReview(); return; }
+  if(reviewQ.length){ qi = 0; renderReview(); return; }
   takeChunk();
 }
 
-/* 复习旧词 */
+/* 复习旧词（保留） */
 function renderReview(){
-  if(qi>=reviewQ.length){ beginLearn(); return; }
+  if(qi>=reviewQ.length){ takeChunk(); return; }
   const w = WORDS[+reviewQ[qi]]; curW=w; curI=reviewQ[qi];
   stage().innerHTML =
     '<div class="badge">复习　' + (qi+1) + '/' + reviewQ.length + '</div>' +
@@ -400,164 +436,95 @@ function revAnswer(ok){
   save(); refresh(); qi++; renderReview();
 }
 
-/* 环节一：切片 → 单词 → 记住/没记住 */
 function takeChunk(){
   batch = allQueue.splice(0, CHUNK);
   sessNew = 0; sessSpell = 0;
-  sessionWrong = new Set();
   S.todayBatch = (S.todayBatch || []).concat(batch).slice(-CHUNK);
   save();
   if(!batch.length){ finish(); return; }
-  beginLearn();
+  qi = 0; step = 0; renderStep();
 }
 
-function beginLearn(){ phase = 1; qi = 0; phaseName='环节一 · 看片段'; phaseTotal=batch.length; renderLearn(); }
-function renderLearn(){
-  if(qi>=batch.length){ startSpell(); return; }
+function renderStep(){
+  if(qi>=batch.length){ startConsolidate(); return; }
   const k = batch[qi]; const w = WORDS[+k]; curW=w; curI=k;
-  const clip = clipOf(w[0]);
-  if(clip){ playClip(clip, ()=>faceCard(w, k)); }
-  else faceCard(w, k);
-}
-function playClip(src, then){
-  const w = curW || [''];
-  const sent = (window.CLIP_SENT && window.CLIP_SENT[w[0]]) || pickSentence(w);
-  const enHtml = highlightWord(sent, w[0]);
-  const zh = (w[1] || '').replace(/^[a-z&.\s]+\.\s*/, '');
-  stage().innerHTML =
-    '<div class="badge">' + phaseName + '　' + (qi+1) + '/' + phaseTotal + '</div>' +
-    '<button class="skip" onclick="skipClip()">跳过</button>' +
-    '<video id="cv" src="' + src + '" playsinline></video>' +
-    '<div class="sub-zh" style="margin-top:10px">' +
-      '<b>' + w[0] + '</b>　' + (w[1] || '').replace(/^[a-z&.\s]+\.\s*/, '') +
-    '</div>';
-  window._then = then;
-  const v = document.getElementById('cv');
-  v.onloadeddata = () => v.play().catch(()=>{});
-  v.onended = () => setTimeout(()=>{ if(window._then) window._then(); }, 280);
-  v.onerror = () => { if(window._then) window._then(); };
-}
-
-function pickSentence(w){
-  const list = w[2] || [];
-  for(const s of list){
-    if(s && s.toLowerCase().indexOf((w[0]||'').toLowerCase()) >= 0) return s;
+  if(step === 0){                                  // ① 切片
+    phaseName = '环节一 · 看切片'; phaseTotal = batch.length;
+    const clip = clipOf(w[0]);
+    if(clip){ playClip(clip, ()=>{ step = 1; renderStep(); }); }
+    else { step = 1; renderStep(); }
+    return;
   }
-  return list[0] || '';
+  if(step === 1){ renderWordCard(w); return; }     // ② 单词 + 例句
+  renderSpellStep(w);                              // ③ 拼写
 }
 
-function highlightWord(sent, word){
-  if(!sent) return '';
-  const safe = sent.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  if(!word) return safe;
-  const re = new RegExp('(' + word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'ig');
-  return safe.replace(re, '<span class="hl">$1</span>');
-}
-
-function skipClip(){ const t=window._then; window._then=null; if(t) t(); }
-function sayWord(){ if(curW) sayWordSeq(curW[0]); }
-
-function faceCard(w, k){
+function renderWordCard(w){
   window._then = null;
+  const ex = (w[2] && w[2][0]) || '';
+  phaseName = '环节一 · 单词'; phaseTotal = batch.length;
   stage().innerHTML =
-    '<div class="badge">环节一 · 认词　' + (qi+1) + '/' + batch.length + '</div>' +
+    '<div class="badge">' + phaseName + '　' + (qi+1) + '/' + batch.length + '</div>' +
     '<div class="word">' + w[0] + '</div>' +
-    '<div class="pos">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
-    '<div class="examples" style="margin:10px 0 2px"><div class="exrow">' +
+    '<div class="pos">' + w[1].replace(/^[a-z&.\\s]+\\.\\s*/,'') + '</div>' +
+    '<div class="examples" style="margin:12px 0 4px"><div class="exrow">' +
       '<button class="speak" onclick="sayEx(0)">' + SPK + '</button>' +
-      '<div class="example">' + ((w[2] && w[2][0]) || '') + '</div>' +
+      '<div class="example">' + ex + '</div>' +
     '</div></div>' +
-    '<div class="btns">' +
-      '<button class="primary" onclick="learnAnswer(true)">记住了（回车）</button>' +
-      '<button class="ghost" onclick="learnAnswer(false)">没记住</button>' +
-    '</div>';
-  sayWordSeq(w[0]);
-}
-
-function learnAnswer(ok){
-  try{ speechSynthesis.cancel(); }catch(e){}
-  const k = batch[qi];
-  bump(k, ok);
-  if(ok){ st().n++; } else { S.wrongBook[k] = 1; missed.add(k); sessionWrong.add(String(k)); }
-  sessNew++;
-  save(); refresh(); qi++; swipe(renderLearn);
-}
-
-/* 环节二：一次一个例句，出现即朗读 */
-function startExamples(){ phase = 2; qi = 0; exampleQ = batch.slice(); renderExample(); }
-function renderExample(){
-  if(qi>=exampleQ.length){ startSpell(); return; }
-  const k = exampleQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
-  const ex = (w[2] && w[2][0]) ? w[2][0] : '';
-  stage().innerHTML =
-    '<div class="badge">环节二 · 例句　' + (qi+1) + '/' + exampleQ.length + '</div>' +
-    '<div class="word" style="font-size:52px">' + w[0] + '</div>' +
-    '<div class="pos">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
-    '<div class="examples"><div class="exrow"><button class="speak" onclick="sayEx(0)">' + SPK + '</button>' +
-    '<div class="example">' + ex + '</div></div></div>' +
-    '<div class="btns"><button class="primary" onclick="swipe(()=>{qi++;renderExample()})">下一个</button></div>';
+    '<div class="btns"><button class="primary" onclick="step=2;renderStep()">去拼写（回车）</button></div>';
   saySeq([{ text: w[0], file: localWord(w[0]) }, { text: ex, file: localEx(w[0], 0) }]);
 }
-function sayEx(i){ const w = curW; if(w && w[2] && w[2][i]) say(w[2][i], 0.85); }
 
-/* 环节三：汉译拼写，背景放切片原声 */
-function startSpell(){ phase = 3; qi = 0; spellQ = batch.slice(); renderSpell(); }
-function renderSpell(){
-  if(qi>=spellQ.length){ startConsolidate(); return; }
-  const k = spellQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
+function renderSpellStep(w){
   playClipAudio(w[0]);
   stage().innerHTML =
-    '<div class="badge">环节二 · 拼写　' + (qi+1) + '/' + spellQ.length + '</div>' +
-    '<div class="meaning">' + w[1].replace(/^[a-z&.\s]+\.\s*/,'') + '</div>' +
+    '<div class="badge">环节二 · 拼写　' + (qi+1) + '/' + batch.length + '</div>' +
+    '<div class="meaning">' + w[1].replace(/^[a-z&.\\s]+\\.\\s*/,'') + '</div>' +
     '<div style="width:100%;display:flex;justify-content:center;margin-top:22px">' +
       '<input id="din" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="拼出英文，回车">' +
     '</div>' +
-    '<div class="btns"><button class="primary" onclick="checkSpell()">确认</button></div>';
-  const inp=document.getElementById('din'); inp.focus();
-  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') checkSpell(); });
+    '<div class="btns"><button class="primary" onclick="checkSpellStep()">确认</button></div>';
+  const inp = document.getElementById('din'); inp.focus();
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') checkSpellStep(); });
 }
-let clipAudio = null;
-function playClipAudio(word){
-  const c = clipOf(word);
-  try{
-    if(clipAudio){ clipAudio.pause(); clipAudio = null; }
-    if(!c) return;
-    clipAudio = new Audio(c);
-    clipAudio.volume = 0.9;
-    clipAudio.play().catch(()=>{});
-  }catch(e){}
-}
-function checkSpell(){
-  const inp=document.getElementById('din'); if(!inp) return;
-  const w=curW;
+
+function checkSpellStep(){
+  const inp = document.getElementById('din'); if(!inp) return;
+  const w = curW;
   const ok = inp.value.trim().toLowerCase() === w[0].toLowerCase();
   inp.disabled = true;
   if(clipAudio){ try{ clipAudio.pause(); }catch(e){} }
   st().d++; sessSpell++;
-  if(ok){ bump(curI,1); playSfx('correct'); }
-  else {
-    bump(curI,0); S.wrongBook[String(curI)] = 1; sessionWrong.add(String(curI));
-    spellQ.push(curI);                 // 再出现一次
+  if(ok){
+    bump(curI, 1); playSfx('correct'); playPraise();
+    stage().querySelector('.btns').innerHTML =
+      '<div class="spell-ok">✓ 正确</div>' +
+      '<button class="primary" onclick="nextWord()">下一个</button>';
+  } else {
+    bump(curI, 0); S.wrongBook[String(curI)] = 1; sessionWrong.add(String(curI));
     playSfx('wrong');
+    stage().querySelector('.btns').innerHTML =
+      '<div class="spell-no">✗ 正确拼写：' + w[0] + '</div>' +
+      '<div class="sub-zh" style="margin-bottom:6px">' + w[1].replace(/^[a-z&.\\s]+\\.\\s*/,'') + '</div>' +
+      '<button class="primary" onclick="nextWord()">下一个</button>';
   }
   save(); refresh();
-  stage().querySelector('.btns').innerHTML =
-    (ok
-      ? '<div class="spell-ok">✓ 正确</div>'
-      : '<div class="spell-no">✗ 正确拼写：' + w[0] + '</div>' +
-        '<div class="sub-zh" style="margin-bottom:6px">' + w[1].replace(/^[a-z&.\\s]+\\.\\s*/,'') + '</div>') +
-    '<button class="primary" onclick="swipe(()=>{qi++;renderSpell()})">下一个</button>';
-  if(ok) say(w[0], 0.9);
 }
 
-/* 环节四：没记住 + 拼错的，二次巩固 */
+function nextWord(){
+  try{ speechSynthesis.cancel(); }catch(e){}
+  if(clipAudio){ try{ clipAudio.pause(); }catch(e){} }
+  qi++; step = 0; swipe(renderStep);
+}
+
+/* 巩固：没记住 + 拼错的 */
 function startConsolidate(){
   consQ = Array.from(sessionWrong);
-  if(!consQ.length){ startPhrases(); return; }
-  phase = 4; qi = 0; phaseName='环节三 · 巩固'; phaseTotal=consQ.length; renderConsolidate();
+  if(!consQ.length){ finish(); return; }
+  qi = 0; phaseName = '环节三 · 巩固'; phaseTotal = consQ.length; renderConsolidate();
 }
 function renderConsolidate(){
-  if(qi>=consQ.length){ takeChunk(); return; }
+  if(qi>=consQ.length){ finish(); return; }
   const k = consQ[qi]; const w = WORDS[+k]; curW=w; curI=k;
   const clip = clipOf(w[0]);
   if(clip){ playClip(clip, ()=>consCard(w)); return; }
@@ -565,14 +532,16 @@ function renderConsolidate(){
 }
 function consCard(w){
   window._then = null;
+  const ex = (w[2] && w[2][0]) || '';
   stage().innerHTML =
     '<div class="badge">环节三 · 巩固　' + (qi+1) + '/' + consQ.length + '</div>' +
     '<div class="word">' + w[0] + '</div>' +
-    (stillOf(w[0]) ? '<img class="still" src="' + stillOf(w[0]) + '" onerror="this.style.display=\'none\'">' : '') +
-    '<div class="btns"><button class="speak" onclick="sayWord()">' + SPK + '</button>' +
-    '<button class="primary" onclick="consDone()">记住了</button></div>';
-  saySeq([{ text: w[0], file: localWord(w[0]) }].concat(
-    (w[2]||[]).slice(0,1).map((t,i) => ({ text: t, file: localEx(w[0], i) }))));
+    '<div class="pos">' + w[1].replace(/^[a-z&.\\s]+\\.\\s*/,'') + '</div>' +
+    '<div class="examples" style="margin:10px 0 4px"><div class="exrow">' +
+      '<button class="speak" onclick="sayEx(0)">' + SPK + '</button>' +
+      '<div class="example">' + ex + '</div></div></div>' +
+    '<div class="btns"><button class="primary" onclick="consDone()">记住了</button></div>';
+  saySeq([{ text: w[0], file: localWord(w[0]) }, { text: ex, file: localEx(w[0], 0) }]);
 }
 function consDone(){
   try{ speechSynthesis.cancel(); }catch(e){}
