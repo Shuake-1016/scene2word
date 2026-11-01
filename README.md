@@ -2,10 +2,6 @@
 
 > 从剧集里挖单词：一键把**任意剧集**变成一套带片段的背单词工具。
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Demo videos: CC BY 3.0](https://img.shields.io/badge/demo%20clips-CC%20BY%203.0-blue.svg)](https://creativecommons.org/licenses/by/3.0/)
-[![Made with Blender open movie](https://img.shields.io/badge/sample-Tears%20of%20Steel-lightgrey.svg)](https://mango.blender.org)
-
 一键把**任意剧集**变成一套带片段的背单词工具：
 
 ```
