@@ -53,7 +53,17 @@ open app/index.html
 
 **换成你自己的剧**：删掉 `docs/demo-clips/`，把你的视频放进 `videos/` 跑一次 pipeline 即可。
 
-## 学习流程（四环节）
+## 学习流程（截图来自仓库自带演示数据）
+
+| ① 看片段 | ② 认词 |
+|---|---|
+| ![片段](docs/step1-clip.png) | ![认词](docs/step2-word.png) |
+
+| ③ 例句（出现即朗读） | ④ 汉译拼写（背景放原片声音） |
+|---|---|
+| ![例句](docs/step3-example.png) | ![拼写](docs/step4-spell.png) |
+
+## 四环节说明
 
 | 环节 | 内容 |
 |---|---|
