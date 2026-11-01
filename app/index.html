@@ -601,7 +601,7 @@ function finish(){
     '生词本累计 <b>' + Object.keys(S.wrongBook).length + '</b> 个词　连续打卡 <b>' + S.streak + '</b> 天</div>' +
     '<div class="lhead">今天的 ' + batch.length + ' 个词</div>' +
     '<div class="wordlist" style="max-height:none">' + rows + '</div>' +
-    '<div class="btns"><button class="primary" onclick="restartToday()">重学今天这 10 个</button>' +
+    '<div class="btns"><button class="primary" onclick="restartToday()">重学这 ' + batch.length + ' 个</button>' +
     '<button class="ghost" onclick="showAll()">全部词表</button>' +
     '<button class="ghost" onclick="startPhrases()">今天的 5 个短语</button>' +
     '<button class="ghost" onclick="location.reload()">回到首页</button></div>';
